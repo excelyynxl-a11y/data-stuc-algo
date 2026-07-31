@@ -10,11 +10,11 @@ __docformat__ = 'reStructuredText'
 
 from typing import Tuple
 
-from data_structures.abstract_binary_search_tree import AbstractBinarySearchTree, K, V
-from data_structures.abstract_hash_table import HashTable
-from data_structures.linked_stack import LinkedStack
-from data_structures.node import BinaryNode, Generic
-from data_structures.referential_array import ArrayR
+from .abstract_binary_search_tree import AbstractBinarySearchTree, K, V
+from .abstract_hash_table import HashTable
+from .linked_stack import LinkedStack
+from .node import BinaryNode, Generic
+from .referential_array import ArrayR
 
 
 class BSTPreOrderIterator(Generic[K,V]):

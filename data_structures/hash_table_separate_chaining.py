@@ -1,6 +1,6 @@
-from data_structures.abstract_hash_table import HashTable
-from data_structures.referential_array import ArrayR
-from data_structures.linked_list import LinkedList
+from .abstract_hash_table import HashTable
+from .referential_array import ArrayR
+from .linked_list import LinkedList
 from typing import TypeVar, Tuple
 
 V = TypeVar('V')

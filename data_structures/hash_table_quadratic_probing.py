@@ -1,6 +1,6 @@
 from __future__ import annotations
-from data_structures.referential_array import ArrayR
-from data_structures.hash_table_linear_probing import LinearProbeTable
+from .referential_array import ArrayR
+from .hash_table_linear_probing import LinearProbeTable
 
 
 class QuadraticProbeTable(LinearProbeTable):

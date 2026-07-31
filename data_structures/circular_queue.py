@@ -1,5 +1,5 @@
-from data_structures.abstract_queue import Queue, T
-from data_structures.referential_array import ArrayR
+from .abstract_queue import Queue, T
+from .referential_array import ArrayR
 
 
 class CircularQueue(Queue[T]):
@@ -77,3 +77,10 @@ class CircularQueue(Queue[T]):
     def __len__(self) -> int:
         """ Returns the number of elements in the queue. """
         return self.__length
+
+    def __str__(self) -> str:
+        items = []
+        for i in range(self.__length):
+            index = (self.__front + i) % len(self.__array)
+            items.append(str(self.__array[index]))
+        return '[' + '\n '.join(items) + ']'

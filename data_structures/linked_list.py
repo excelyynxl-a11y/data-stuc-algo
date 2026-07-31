@@ -1,5 +1,5 @@
-from data_structures.abstract_list import List, T
-from data_structures.node import Node
+from .abstract_list import List, T
+from .node import Node
 
 
 class LinkedListIterator:

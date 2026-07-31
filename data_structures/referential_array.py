@@ -22,7 +22,7 @@ __docformat__ = 'reStructuredText'
 
 from ctypes import py_object
 from typing import Generic, Union, TypeVar
-from data_structures.abstract_list import List
+from .abstract_list import List
 
 T = TypeVar('T')
 

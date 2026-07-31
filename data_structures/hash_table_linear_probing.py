@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TypeVar, Tuple, List
-from data_structures.abstract_hash_table import HashTable
-from data_structures.referential_array import ArrayR
+from .abstract_hash_table import HashTable
+from .referential_array import ArrayR
 
 V = TypeVar('V')
 

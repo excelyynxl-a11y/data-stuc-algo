@@ -1,5 +1,5 @@
-from data_structures.node import Node
-from data_structures.abstract_stack import Stack, T
+from .node import Node
+from .abstract_stack import Stack, T
 
 
 class LinkedStack(Stack[T]):
