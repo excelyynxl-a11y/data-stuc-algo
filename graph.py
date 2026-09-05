@@ -2,6 +2,7 @@ import bisect
 import math
 from data_structures.linked_stack import LinkedStack;
 from data_structures.linked_queue import LinkedQueue;
+from data_structures.array_min_heap import ArrayMinHeap;
 
 class Graph:
     '''
@@ -15,6 +16,10 @@ class Graph:
         self.vertices = [None] * len(V)
         for i in range(len(V)):
             self.vertices[i] = Vertex(V[i])
+        self.__length = len(self.vertices)
+
+    def __len__(self):
+        return self.__length
 
     def __str__(self):
         ret_str = ''
@@ -56,6 +61,8 @@ class Graph:
         for vertex in self.vertices:
             vertex.visited = False 
             vertex.discovered = False 
+            vertex.previous = None 
+            vertex.distance = math.inf 
 
     def bfs(self, starting_vertex: Vertex):
         '''
@@ -209,17 +216,59 @@ class Graph:
             self.reset()
             return ValueError('Destination ', destination, ' does not exist in graph.')
 
-    def dijkstra(self, source: Vertex, destination: Vertex):
+    def dijkstra(self, source: Vertex, destination: Vertex) -> ArrayMinHeap:
         '''
         Dijkstra algorithm to find the shortest distance between source and destination of a weighted graph.
+        Using a MinHeap to store (vertex, distance)
         Combines dynamic programming and greedy algorithm.
-        Return shortest_distance and a list of vertex_path from source to destination
         '''
-        shortest_distance = 0 
-        
-        # todo    
+        discovered_heap = ArrayMinHeap(max_items = self.__len__())
+        source.distance = 0
+        discovered_heap.add((source, source.distance))
 
-        return shortest_distance
+        while len(discovered_heap) > 0:
+            # extract root = next smallest distance
+            u = discovered_heap.extract_root()
+            # u is visited, u distance is finalised
+            u.visited = True 
+
+            # edge relaxation on all u neighbor
+            for edge in u.edges:
+                v = edge.v 
+
+                # if v is not discovered, means the distance is still inf
+                # we need to update the distance to a better / smaller distance 
+                if v.discovered == False: 
+                    v.discovered = True 
+                    v.distance = edge.w + u.distance 
+                    v.previous = u # for backtracking
+                    discovered_heap.add(v, v.distance)
+                # v is in heap but distance not yet finalised
+                elif v.visited == False:
+                    if v.distance > u.distance + edge.w:
+                        old_v = (v, v.distance)
+                        v.distance = u.distance + edge.w 
+                        v.previous = u # for backtracking 
+                        new_v = (v, v.distance)
+                        discovered_heap.update(old_v, new_v)  
+                        # after updating, discovered_heap might undergo rising to maintain heap structure 
+
+        return discovered_heap
+
+    def find_cycle_undirected(self):
+        '''
+        Find if a cycle exist in this undirected graph using BFS approach.
+        Same as bfs(), except i added a check for "if v.discovered: return True" as we have found a cycle.
+        '''
+        
+        return False 
+
+    def find_cycle_directed(self):
+        '''
+        Find if a cycle exist in this directed graph using BFS approach.
+        Same as bfs(), except i added a check for "if v.discovered: return True" as we have found a cycle.
+        '''
+        return False
 
 class Vertex:
     '''
@@ -230,6 +279,8 @@ class Vertex:
         self.edges = []
         self.discovered = False 
         self.visited = False 
+        self.distance = math.inf()
+        self.previous = None 
 
     def __str__(self):
         edges_str = ', '.join(str(edge) for edge in self.edges)
@@ -270,6 +321,7 @@ class Edge:
 
     def __repr__(self):
         return f'Edge({self.u.id!r}, {self.v.id!r}, {self.w!r})'
+
 
 if __name__ == "__main__":
 
@@ -328,18 +380,68 @@ if __name__ == "__main__":
 # %%
 
 # %%
+    print('\n========== PARTY INFECTED USING BFS ==========\n') 
     vertices  = ['A', 'B', 'C', 'D', 'E']
-    weighted_directed_graph = Graph(V = vertices)
-    print(weighted_directed_graph)
+    directed_graph = Graph(V = vertices)
+    print(directed_graph)
 
-    weighted_directed_graph.add_directed_edge('A', 'B') 
-    weighted_directed_graph.add_directed_edge('A', 'C') 
-    weighted_directed_graph.add_directed_edge('B', 'C') 
-    weighted_directed_graph.add_directed_edge('B', 'D') 
-    weighted_directed_graph.add_directed_edge('C', 'B') 
-    weighted_directed_graph.add_directed_edge('C', 'D') 
-    weighted_directed_graph.add_directed_edge('C', 'E') 
-    weighted_directed_graph.add_directed_edge('D', 'E') 
-    weighted_directed_graph.add_directed_edge('E', 'D')  
-    print(weighted_directed_graph)    
+    directed_graph.add_directed_edge('A', 'B') 
+    directed_graph.add_directed_edge('A', 'C') 
+    directed_graph.add_directed_edge('B', 'C') 
+    directed_graph.add_directed_edge('B', 'D') 
+    directed_graph.add_directed_edge('C', 'B') 
+    directed_graph.add_directed_edge('C', 'D') 
+    directed_graph.add_directed_edge('C', 'E') 
+    directed_graph.add_directed_edge('D', 'E') 
+    directed_graph.add_directed_edge('E', 'D')  
+    print(directed_graph)  
+
+    infected_first = Vertex('A')
+    bfs_directed_graph = directed_graph.bfs(infected_first)
+    print(infected_first.id, ' infected ', bfs_directed_graph, ' = ', len(bfs_directed_graph), ' parties')  
+    infected_first = Vertex('B')
+    bfs_directed_graph = directed_graph.bfs(infected_first)
+    print(infected_first.id, ' infected ', bfs_directed_graph, ' = ', len(bfs_directed_graph), ' parties')  
+    infected_first = Vertex('C')
+    bfs_directed_graph = directed_graph.bfs(infected_first)
+    print(infected_first.id, ' infected ', bfs_directed_graph, ' = ', len(bfs_directed_graph), ' parties')  
+    infected_first = Vertex('D')
+    bfs_directed_graph = directed_graph.bfs(infected_first)
+    print(infected_first.id, ' infected ', bfs_directed_graph, ' = ', len(bfs_directed_graph), ' parties')  
+    infected_first = Vertex('E')
+    bfs_directed_graph = directed_graph.bfs(infected_first)
+    print(infected_first.id, ' infected ', bfs_directed_graph, ' = ', len(bfs_directed_graph), ' parties')  
 # %%   
+
+# %%
+    print('\n========== FINDING CYCLE USING BFS ==========\n') 
+    vertices  = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+    no_cycle_1 = Graph(V = vertices)
+    no_cycle_1.add_edge('A', 'B')   
+    no_cycle_1.add_edge('A', 'C')
+    no_cycle_1.add_edge('C', 'D')
+    no_cycle_1.add_edge('B', 'F')
+    no_cycle_1.add_edge('B', 'E')
+    no_cycle_1.add_edge('F', 'G')
+    no_cycle_1.add_edge('E', 'G')
+    no_cycle_1.add_edge('E', 'H')
+    no_cycle_1.add_edge('G', 'H')
+    has_cycle = no_cycle_1.find_cycle()
+    print('Has a cycle: ', has_cycle)
+
+    # no_cycle_2 = 
+
+    vertices  = ['A', 'B', 'C', 'D', 'E']
+    has_cycle_1 = Graph(V = vertices)
+    has_cycle_1.add_edge('A', 'B')   
+    has_cycle_1.add_edge('A', 'C')
+    has_cycle_1.add_edge('A', 'D')
+    has_cycle_1.add_edge('A', 'E')
+    has_cycle = has_cycle_1.find_cycle()
+    print('Has a cycle: ', has_cycle)
+
+    # has_cycle_2 = 
+    # has_cycle = has_cycle_2.find_cycle()
+    # print('Has a cycle: ', has_cycle)
+    
+# %%
