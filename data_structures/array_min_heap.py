@@ -150,6 +150,11 @@ class ArrayMinHeap(AbstractHeap[T]):
             res[i-1] = self.__array[i]
             
         return res
+
+    def update(self, old_item, new_item):
+        for item in self.__array:
+            if item == old_item:
+                item = new_item
     
     def __len__(self) -> int:
         return self.__length
