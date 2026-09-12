@@ -23,8 +23,8 @@ class AdjacencyListGraph():
                self.adjacency_list[vertex] = []
 
      def add_edge(self, edge: Edge, is_directed=True):
-          # self.add_vertex(edge.u)
-          # self.add_vertex(edge.v)
+          self.add_vertex(edge.u)
+          self.add_vertex(edge.v)
 
           if not is_directed:
                self.adjacency_list[edge.u].append((edge.v, edge.w)) 
@@ -143,6 +143,14 @@ class Vertex():
           return_string += self.name 
           return return_string 
 
+     def __eq__(self, other):
+          if not isinstance(other, Vertex):
+               return NotImplemented 
+          return self.name == other.name 
+
+     def __hash__(self):
+          return hash(self.name)
+
 class Edge():
      def __init__(self, u: Vertex, v: Vertex, w = 1):
           self.u = u 
@@ -152,6 +160,12 @@ class Edge():
      def __str__(self):
           return_string = ""
           return_string += "<" + self.u + ", " + self.v + ">"
+
+     def __eq__(self, other):
+          pass
+
+     def __hash__(self):
+          pass
 
 
 if "__name__" == "__name__": 
