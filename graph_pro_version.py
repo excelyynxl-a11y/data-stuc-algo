@@ -1,4 +1,5 @@
 import math
+from data_structures.linked_queue import LinkedQueue;
 
 class AdjacencyListGraph():
      def __init__(self, V: list[Vertex]):
@@ -22,15 +23,28 @@ class AdjacencyListGraph():
           if vertex not in self.adjacency_list:
                self.adjacency_list[vertex] = []
 
+     def canonical_vertex(self, vertex: Vertex):
+          '''
+          Returns the single Vertex instance stored in this graph that has
+          the same name, so traversal flags apply to one shared instance.
+          '''
+          for existing_vertex in self.adjacency_list:
+               if existing_vertex == vertex:
+                    return existing_vertex 
+          return vertex 
+
      def add_edge(self, edge: Edge, is_directed=True):
           self.add_vertex(edge.u)
           self.add_vertex(edge.v)
 
+          u = self.canonical_vertex(edge.u)
+          v = self.canonical_vertex(edge.v)
+
           if not is_directed:
-               self.adjacency_list[edge.u].append((edge.v, edge.w)) 
-               self.adjacency_list[edge.v].append((edge.u, edge.w)) 
+               self.adjacency_list[u].append((v, edge.w)) 
+               self.adjacency_list[v].append((u, edge.w)) 
           else: 
-               self.adjacency_list[edge.u].append((edge.v, edge.w)) 
+               self.adjacency_list[u].append((v, edge.w)) 
 
      def get_outgoing(self, vertex: Vertex):
           return self.adjacency_list[vertex]
@@ -63,7 +77,33 @@ class AdjacencyListGraph():
                     outgoing_v.previous = None
 
      def bfs(self, source: Vertex):
-          pass 
+          '''
+          Ideal for undirected unweighted graph.
+          Return a visited_output list in BFS order with BFSed distance from source vertex.
+          '''
+          source = self.canonical_vertex(source)
+          discovered_queue = LinkedQueue()
+          visited_output = []
+          print('append ', source, ' into discovered_queue')
+          discovered_queue.append(source)
+          source.discovered = True 
+          source.distance = 0
+
+          while not discovered_queue.is_empty():
+               visited = discovered_queue.serve()
+               visited.visited = True
+               print('append ', visited, ' into visited_output')
+               visited_output.append((visited, visited.distance))
+               for (v, w) in self.adjacency_list[visited]:
+                    if not v.discovered:
+                         v.discovered = True 
+                         v.distance = visited.distance + 1 
+                         v.previous = visited 
+                         print('append ', v, ' into discovered_queue')
+                         discovered_queue.append(v)
+
+          self.reset()
+          return visited_output
 
      def dfs(self, source: Vertex):
           pass  
@@ -139,9 +179,10 @@ class Vertex():
           self.previous = None 
 
      def __str__(self):
-          return_string = ""
-          return_string += self.name 
-          return return_string 
+          return self.name
+
+     def __repr__(self):
+          return f"{self.name}, {self.distance}"
 
      def __eq__(self, other):
           if not isinstance(other, Vertex):
@@ -158,8 +199,10 @@ class Edge():
           self.w = w
 
      def __str__(self):
-          return_string = ""
-          return_string += "<" + self.u + ", " + self.v + ">"
+          return f"{self.u} -> {self.v} (w={self.w})"
+
+     def __repr__(self):
+          return f"Edge({self.u!r}, {self.v!r}, w={self.w})"
 
      def __eq__(self, other):
           pass
@@ -170,11 +213,26 @@ class Edge():
 
 if "__name__" == "__name__": 
      vertices = [Vertex('A'), Vertex('B'), Vertex('C'), Vertex('D'), Vertex('E')]
-     adjacency_list_graph = AdjacencyListGraph(vertices)
-     adjacency_list_graph.add_edge(Edge(Vertex('A'), Vertex('B'), 2))
-     adjacency_list_graph.add_edge(Edge(Vertex('A'), Vertex('C'), 3))
-     adjacency_list_graph.add_edge(Edge(Vertex('B'), Vertex('D'), 4))
-     adjacency_list_graph.add_edge(Edge(Vertex('C'), Vertex('D'), 5))
-     adjacency_list_graph.add_edge(Edge(Vertex('C'), Vertex('E'), 1))
-     adjacency_list_graph.add_edge(Edge(Vertex('E'), Vertex('D'), 6))
-     print(adjacency_list_graph)
+     directed_adjacency_list_graph = AdjacencyListGraph(vertices)
+     directed_adjacency_list_graph.add_edge(Edge(Vertex('A'), Vertex('B'), 2))
+     directed_adjacency_list_graph.add_edge(Edge(Vertex('A'), Vertex('C'), 3))
+     directed_adjacency_list_graph.add_edge(Edge(Vertex('B'), Vertex('D'), 4))
+     directed_adjacency_list_graph.add_edge(Edge(Vertex('C'), Vertex('D'), 5))
+     directed_adjacency_list_graph.add_edge(Edge(Vertex('C'), Vertex('E'), 1))
+     directed_adjacency_list_graph.add_edge(Edge(Vertex('E'), Vertex('D'), 6))
+     print(directed_adjacency_list_graph)
+
+     vertices = [Vertex('A'), Vertex('B'), Vertex('C'), Vertex('D'), Vertex('E'), Vertex('F'), Vertex('G'), Vertex('H')]
+     undirected_adjacency_list_graph = AdjacencyListGraph(vertices)
+     undirected_adjacency_list_graph.add_edge(Edge(Vertex('A'), Vertex('B')), False)
+     undirected_adjacency_list_graph.add_edge(Edge(Vertex('A'), Vertex('C')), False)
+     undirected_adjacency_list_graph.add_edge(Edge(Vertex('C'), Vertex('D')), False)
+     undirected_adjacency_list_graph.add_edge(Edge(Vertex('B'), Vertex('F')), False)
+     undirected_adjacency_list_graph.add_edge(Edge(Vertex('B'), Vertex('E')), False)
+     undirected_adjacency_list_graph.add_edge(Edge(Vertex('F'), Vertex('G')), False)
+     undirected_adjacency_list_graph.add_edge(Edge(Vertex('E'), Vertex('G')), False)
+     undirected_adjacency_list_graph.add_edge(Edge(Vertex('E'), Vertex('H')), False)
+     undirected_adjacency_list_graph.add_edge(Edge(Vertex('G'), Vertex('H')), False)
+     print(undirected_adjacency_list_graph)
+     bfs = undirected_adjacency_list_graph.bfs(Vertex('A'))
+     print(bfs)
