@@ -107,6 +107,10 @@ class AdjacencyListGraph():
           return visited_output
 
      def dfs(self, source: Vertex):
+          '''
+          Ideal for undirected unweighted graph.
+          Return a visited_output list in DFS order with DFSed distance from source vertex.
+          '''
           source = self.canonical_vertex(source)
           discovered_stack = LinkedStack()
           visited_output = []
