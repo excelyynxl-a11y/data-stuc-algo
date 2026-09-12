@@ -1,5 +1,6 @@
 import math
 from data_structures.linked_queue import LinkedQueue;
+from data_structures.linked_stack import LinkedStack;
 
 class AdjacencyListGraph():
      def __init__(self, V: list[Vertex]):
@@ -106,7 +107,30 @@ class AdjacencyListGraph():
           return visited_output
 
      def dfs(self, source: Vertex):
-          pass  
+          source = self.canonical_vertex(source)
+          discovered_stack = LinkedStack()
+          visited_output = []
+          discovered_stack.push(source)
+          print('push ', source, ' into discovered_stack')
+          source.discovered = True 
+          source.distance = 0 
+
+          while not discovered_stack.is_empty():
+               visited = discovered_stack.pop()
+               visited.visited = True 
+               print('append ', visited, ' into visited_output')
+               visited_output.append((visited, visited.distance))
+               for (v, w) in self.adjacency_list[visited]:
+                    if not v.discovered:
+                         v.discovered = True 
+                         v.distance = visited.distance + 1
+                         v.previous = visited 
+                         print('push ', v, ' into discovered_stack')
+                         discovered_stack.push(v)
+
+          self.reset()
+          return visited_output
+
 
      def relax_edge(self, u: Vertex, v: Vertex):
           pass 
@@ -236,3 +260,5 @@ if "__name__" == "__name__":
      print(undirected_adjacency_list_graph)
      bfs = undirected_adjacency_list_graph.bfs(Vertex('A'))
      print(bfs)
+     dfs = undirected_adjacency_list_graph.dfs(Vertex('A'))
+     print(dfs)
