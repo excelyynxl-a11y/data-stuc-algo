@@ -60,9 +60,11 @@ class AdjacencyListGraph():
 
      def delete_edge(self, edge: Edge):
           for u in self.adjacency_list:
-               for (v, w) in self.adjacency_list[u]:
-                    if u == edge.u  and v == edge.v and w == edge.w:
+               for (v, w) in self.adjacency_list[u][:]:
+                    if u == edge.u and v == edge.v and w == edge.w:
                          self.adjacency_list[u].remove((edge.v, edge.w))
+                    elif u == edge.v and v == edge.u and w == edge.w:
+                         self.adjacency_list[u].remove((edge.u, edge.w))
 
      def reset(self):
           for v in self.adjacency_list:
@@ -134,6 +136,18 @@ class AdjacencyListGraph():
 
           self.reset()
           return visited_output
+
+     def topology_sort_dfs(self):
+          pass 
+
+     def kahns(self):
+          pass 
+
+     def has_incoming(self, vertex: Vertex):
+          return len(self.get_incoming(vertex)) > 0
+
+     def has_outgoing(self, vertex: Vertex):
+          return len(self.get_outgoing(vertex)) > 0
 
 
      def relax_edge(self, u: Vertex, v: Vertex):
@@ -266,3 +280,5 @@ if "__name__" == "__name__":
      print(bfs)
      dfs = undirected_adjacency_list_graph.dfs(Vertex('A'))
      print(dfs)
+     undirected_adjacency_list_graph.delete_edge(Edge(Vertex('A'), Vertex('B')))
+     print(undirected_adjacency_list_graph)
