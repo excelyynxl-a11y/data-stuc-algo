@@ -155,6 +155,17 @@ class ArrayMinHeap(AbstractHeap[T]):
         for item in self.__array:
             if item == old_item:
                 item = new_item
+
+    def update_distance(self, item, new_distance):
+        """
+        For updating minheap used in Dijstra
+        """
+        for k in range(1, len(self) + 1):
+            if self.__array[k] == item:
+                self.__array[k].distance = new_distance 
+                self._rise(k)
+                self._sink(k)
+                return 
     
     def __len__(self) -> int:
         return self.__length

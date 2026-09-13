@@ -154,8 +154,9 @@ class AdjacencyListGraph():
           '''
           Dijkstra to calculate nearest distance to every vertex from source
           on a directed and without negative weighted edges.
-          UPDATE NOT WORKING YET
           '''
+          self.reset() # if put before return statement, my nearest_distance will be affected from reset()
+
           discover_min_heap = ArrayMinHeap(len(self.adjacency_list))
           nearest_distance = []
           source.distance = 0
@@ -167,24 +168,24 @@ class AdjacencyListGraph():
                print(u, u.distance, 'extracted from minheap')
                nearest_distance.append(u)
                u.visited = True 
+
+               # edge relaxation all the outgoing edges of u
                for (v, w) in self.get_outgoing(u):
                     if v.visited:
                          pass 
                     else:
-                         if not v.discovered:
+                         if not v.discovered: # not discovered means not in minheap, v.distance = inf
                               v.distance = u.distance + w 
                               v.previous = u 
                               discover_min_heap.add(v)
                               print(v, v.distance, ' added to minheap')
                               v.discovered = True 
                          else:
-                              if v.distance > u.distance + w:
-                                   print(v, v.distance, ' updating to ', u.distance + w)
-                                   discover_min_heap.update(v, u.distance + w)
-                                   
+                              if v.distance > u.distance + w: # if there's a better distance, update minheap
+                                   print(v, v.distance, ' updating to ', )
+                                   discover_min_heap.update_distance(v, u.distance + w) 
                                    v.previous = u
                                    v.discovered = True
-
           return nearest_distance
 
      def has_incoming(self, vertex: Vertex):
@@ -264,7 +265,7 @@ class Vertex():
           self.previous = None 
 
      def __str__(self):
-          return self.name
+          return self.name 
 
      def __repr__(self):
           return f"{self.name}, {self.distance}"
