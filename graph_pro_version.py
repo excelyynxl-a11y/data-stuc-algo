@@ -1,6 +1,7 @@
 import math
 from data_structures.linked_queue import LinkedQueue;
 from data_structures.linked_stack import LinkedStack;
+from data_structures.array_min_heap import ArrayMinHeap;
 
 class AdjacencyListGraph():
      def __init__(self, V: list[Vertex]):
@@ -138,17 +139,59 @@ class AdjacencyListGraph():
           return visited_output
 
      def topology_sort_dfs(self):
+          '''
+          Topology sort a directed graph using DFS.
+          '''
           pass 
 
      def kahns(self):
-          pass 
+          '''
+          Topology sort a directed graph using Kahns.
+          '''
+          pass
+
+     def dijkstra(self, source: Vertex):
+          '''
+          Dijkstra to calculate nearest distance to every vertex from source
+          on a directed and without negative weighted edges.
+          UPDATE NOT WORKING YET
+          '''
+          discover_min_heap = ArrayMinHeap(len(self.adjacency_list))
+          nearest_distance = []
+          source.distance = 0
+          discover_min_heap.add(source)
+          print(source, source.distance, ' added to minheap')
+
+          while not discover_min_heap.is_empty():
+               u = discover_min_heap.extract_root() 
+               print(u, u.distance, 'extracted from minheap')
+               nearest_distance.append(u)
+               u.visited = True 
+               for (v, w) in self.get_outgoing(u):
+                    if v.visited:
+                         pass 
+                    else:
+                         if not v.discovered:
+                              v.distance = u.distance + w 
+                              v.previous = u 
+                              discover_min_heap.add(v)
+                              print(v, v.distance, ' added to minheap')
+                              v.discovered = True 
+                         else:
+                              if v.distance > u.distance + w:
+                                   print(v, v.distance, ' updating to ', u.distance + w)
+                                   discover_min_heap.update(v, u.distance + w)
+                                   
+                                   v.previous = u
+                                   v.discovered = True
+
+          return nearest_distance
 
      def has_incoming(self, vertex: Vertex):
           return len(self.get_incoming(vertex)) > 0
 
      def has_outgoing(self, vertex: Vertex):
           return len(self.get_outgoing(vertex)) > 0
-
 
      def relax_edge(self, u: Vertex, v: Vertex):
           pass 
@@ -234,6 +277,11 @@ class Vertex():
      def __hash__(self):
           return hash(self.name)
 
+     def __gt__(self, other):
+          if not isinstance(other, Vertex):
+               return NotImplemented 
+          return self.distance > other.distance
+
 class Edge():
      def __init__(self, u: Vertex, v: Vertex, w = 1):
           self.u = u 
@@ -282,3 +330,19 @@ if "__name__" == "__name__":
      print(dfs)
      undirected_adjacency_list_graph.delete_edge(Edge(Vertex('A'), Vertex('B')))
      print(undirected_adjacency_list_graph)
+
+     vertices = [Vertex('S'), Vertex('W'), Vertex('T'), Vertex('Y'), Vertex('V'), Vertex('X'), Vertex('U')]
+     dijkstra_directed_graph = AdjacencyListGraph(vertices)
+     dijkstra_directed_graph.add_edge(Edge(Vertex('S'), Vertex('W'), 18))
+     dijkstra_directed_graph.add_edge(Edge(Vertex('S'), Vertex('Y'), 3))
+     dijkstra_directed_graph.add_edge(Edge(Vertex('W'), Vertex('T'), 14))
+     dijkstra_directed_graph.add_edge(Edge(Vertex('V'), Vertex('T'), 6))
+     dijkstra_directed_graph.add_edge(Edge(Vertex('V'), Vertex('W'), 3))
+     dijkstra_directed_graph.add_edge(Edge(Vertex('Y'), Vertex('V'), 15))
+     dijkstra_directed_graph.add_edge(Edge(Vertex('Y'), Vertex('X'), 5))
+     dijkstra_directed_graph.add_edge(Edge(Vertex('X'), Vertex('V'), 5))
+     dijkstra_directed_graph.add_edge(Edge(Vertex('X'), Vertex('U'), 11))
+     dijkstra_directed_graph.add_edge(Edge(Vertex('V'), Vertex('U'), 5))
+     print(dijkstra_directed_graph)
+     dijkstra = dijkstra_directed_graph.dijkstra(Vertex('S'))
+     print(dijkstra)
