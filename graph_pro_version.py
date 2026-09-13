@@ -153,12 +153,13 @@ class AdjacencyListGraph():
      def dijkstra(self, source: Vertex):
           '''
           Dijkstra to calculate nearest distance to every vertex from source
-          on a directed and without negative weighted edges.
+          on a undirected / directed and without negative weighted edges.
           '''
           self.reset() # if put before return statement, my nearest_distance will be affected from reset()
 
           discover_min_heap = ArrayMinHeap(len(self.adjacency_list))
           nearest_distance = []
+          source = self.canonical_vertex(source)
           source.distance = 0
           discover_min_heap.add(source)
           print(source, source.distance, ' added to minheap')
@@ -171,6 +172,7 @@ class AdjacencyListGraph():
 
                # edge relaxation all the outgoing edges of u
                for (v, w) in self.get_outgoing(u):
+                    v = self.canonical_vertex(v)
                     if v.visited:
                          pass 
                     else:
@@ -346,4 +348,22 @@ if "__name__" == "__name__":
      dijkstra_directed_graph.add_edge(Edge(Vertex('V'), Vertex('U'), 5))
      print(dijkstra_directed_graph)
      dijkstra = dijkstra_directed_graph.dijkstra(Vertex('S'))
+     print(dijkstra)
+
+     vertices = [Vertex('A'), Vertex('B'), Vertex('C'), Vertex('D'), Vertex('E'), Vertex('F'), Vertex('G')]
+     dijkstra_undirected_graph = AdjacencyListGraph(vertices)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('A'), Vertex('B'), 15), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('A'), Vertex('C'), 19), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('A'), Vertex('D'), 7), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('A'), Vertex('E'), 11), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('A'), Vertex('F'), 6), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('A'), Vertex('G'), 4), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('G'), Vertex('B'), 3), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('G'), Vertex('D'), 20), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('F'), Vertex('E'), 8), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('E'), Vertex('B'), 13), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('E'), Vertex('D'), 1), False)
+     dijkstra_undirected_graph.add_edge(Edge(Vertex('D'), Vertex('C'), 2), False)
+     print(dijkstra_undirected_graph)
+     dijkstra = dijkstra_undirected_graph.dijkstra(Vertex('A'))
      print(dijkstra)
