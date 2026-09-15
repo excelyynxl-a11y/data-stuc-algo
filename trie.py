@@ -34,6 +34,29 @@ class Trie:
         # add data 
         current.data = data
 
+    def insert_recursion(self, key, data=None):
+        current = self.root
+        self._insert_recursion_aux(current, key, data)
+
+    def _insert_recursion_aux(self, current, key, data):
+        # base case
+        if len(key) == 0:
+            current.data = data 
+        # modify current
+        else:
+            index = ord(key[0]) - 97 + 1
+
+            # if path exist
+            if not current.links[index] is None:
+                current = current.links[index]
+            # if path doesnt exist, create new node   
+            else:
+                current.links[index] = Node()
+                current = current.links[index]            
+            # recurse removing first char
+            self._insert_recursion_aux(current, key[1:], data)
+
+
     def search(self, key):
         # begin from root 
         current = self.root 
@@ -85,5 +108,23 @@ except Exception as e:
 
 try:
     print(trie_test.search("wtf"))
+except Exception as e:
+    print(e)
+
+print("------ NOT WORKING -----------")
+trie_test_recursion = Trie()
+trie_test_recursion.insert_recursion("lol", "i am lol")
+trie_test_recursion.insert_recursion("loa", "i am loa")
+trie_test_recursion.insert_recursion("uwu", None)
+
+try:
+    print(trie_test_recursion.search("lol"))
+    print(trie_test_recursion.search("loa"))
+    print(trie_test_recursion.search("uwu"))
+except Exception as e:
+    print(e)
+
+try:
+    print(trie_test_recursion.search("wtf"))
 except Exception as e:
     print(e)
